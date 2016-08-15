@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface LeagueService {
 
-    Collection<Team> getTeams();
+    Collection<Team> getTeams() throws Exception;
 
 }
