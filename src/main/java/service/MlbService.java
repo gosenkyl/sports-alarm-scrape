@@ -5,11 +5,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class MlbService implements LeagueService{
@@ -49,7 +52,21 @@ public class MlbService implements LeagueService{
             result.append(line);
         }
 
-        System.out.println(result.toString());
+        JSONObject initial = new JSONObject(result.toString());
+        JSONObject data = initial.getJSONObject("data");
+        JSONObject games = data.getJSONObject("games");
+
+        JSONArray gameList = games.getJSONArray("game");
+
+        Iterator it = gameList.iterator();
+
+        while(it.hasNext()){
+            JSONObject game = (JSONObject) it.next();
+
+            System.out.println(game.get("home_name_abbrev") + " vs " + game.get("away_name_abbrev"));
+        }
+
+        //System.out.println(result.toString());
 
 
         return mlbTeamMap.values();
