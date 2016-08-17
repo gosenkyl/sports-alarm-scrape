@@ -15,11 +15,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MlbService implements LeagueService{
+public class MlbService extends BaseLeagueService implements LeagueService{
 
     private static final String baseURL = "http://gd2.mlb.com/components/game/mlb/year_:PARSE_YEAR/month_:PARSE_MONTH/day_:PARSE_DAY/master_scoreboard.json";
-
-    private Map<String, Team> mlbTeamMap = new HashMap();
 
     @Override
     public Collection<Team> getTeams() throws Exception {
@@ -47,7 +45,7 @@ public class MlbService implements LeagueService{
                 new InputStreamReader(response.getEntity().getContent()));
 
         StringBuffer result = new StringBuffer();
-        String line = "";
+        String line;
         while ((line = rd.readLine()) != null) {
             result.append(line);
         }
@@ -63,14 +61,17 @@ public class MlbService implements LeagueService{
         while(it.hasNext()){
             JSONObject game = (JSONObject) it.next();
 
+            //Game
+
             System.out.println(game.get("home_name_abbrev") + " vs " + game.get("away_name_abbrev"));
         }
 
         //System.out.println(result.toString());
 
 
-        return mlbTeamMap.values();
+        return teamMap.values();
     }
+
 
 
 }

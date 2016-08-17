@@ -15,7 +15,7 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class NflService implements LeagueService{
+public class NflService extends BaseLeagueService implements LeagueService{
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm");
 
@@ -24,8 +24,6 @@ public class NflService implements LeagueService{
     // The schedule changes on Wednesday 7:00 UTC during the regular season
 
     private static final String baseURL = "http://www.nfl.com/ajax/scorestrip?season=:PARSE_SEASON&seasonType=:PARSE_TYPE&week=:PARSE_WEEK";
-
-    private Map<String, Team> nflTeamMap = new HashMap();
 
     @Override
     public Collection<Team> getTeams() {
@@ -130,18 +128,7 @@ public class NflService implements LeagueService{
             e.printStackTrace();
         }
 
-        return nflTeamMap.values();
-    }
-
-    private Team getAndAddTeam(String teamId){
-        Team team = nflTeamMap.get(teamId);
-        if(team == null){
-            team = new Team();
-            team.setId(teamId);
-            team.setLeagueId("NFL");
-            nflTeamMap.put(teamId, team);
-        }
-        return team;
+        return teamMap.values();
     }
 
     private static Document parseXML(InputStream stream) throws Exception {
