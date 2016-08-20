@@ -1,24 +1,52 @@
-group 'gosenk.sports.alarm.scrape'
+group 'com.gosenk.sports.alarm.scrape'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
+buildscript{
+    repositories{
+        mavenCentral()
+    }
+    dependencies{
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
+        classpath group: "mysql", name: "mysql-connector-java", version: "5.1.35"
+    }
+}
 
-sourceCompatibility = 1.5
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+
     // https://mvnrepository.com/artifact/org.jsoup/jsoup
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
-
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
-
     // https://mvnrepository.com/artifact/org.json/json
     compile group: 'org.json', name: 'json', version: '20160810'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.2.Final'
 
+    compile group:'mysql', name:'mysql-connector-java'
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task wrapper(type: Wrapper){
+    gradleVersion = '2.3'
+}
+
+idea {
+    project {
+        jdkName = '1.8'
+        languageLevel = '1.8'
+    }
 }

@@ -1,12 +1,15 @@
-package service;
+package com.gosenk.sports.alarm.scrape.service;
 
-import dto.Game;
-import dto.Team;
+import com.gosenk.sports.alarm.scrape.dso.Game;
+import com.gosenk.sports.alarm.scrape.dso.League;
+import com.gosenk.sports.alarm.scrape.dso.Team;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
@@ -15,6 +18,7 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Service("nfl")
 public class NflService extends BaseLeagueService implements LeagueService{
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm");
@@ -24,6 +28,13 @@ public class NflService extends BaseLeagueService implements LeagueService{
     // The schedule changes on Wednesday 7:00 UTC during the regular season
 
     private static final String baseURL = "http://www.nfl.com/ajax/scorestrip?season=:PARSE_SEASON&seasonType=:PARSE_TYPE&week=:PARSE_WEEK";
+
+    @PostConstruct
+    public void createLeague(){
+        League league = new League();
+        league.setId("NFL");
+        setLeague(league);
+    }
 
     @Override
     public Collection<Team> getTeams() {
@@ -94,22 +105,26 @@ public class NflService extends BaseLeagueService implements LeagueService{
                     // Home Team
                     Game homeGame = new Game();
 
+                    homeGame.setId(eid+"-home");
+                    homeGame.setTeam(homeTeam);
                     homeGame.setTime(gameDate);
-                    homeGame.setHomeTeam(true);
-                    homeGame.setOpponentTeamId(awayTeamId);
+                    homeGame.setHomeFlag(true);
+                    homeGame.setOpponentTeam(awayTeam);
 
                     homeTeam.getSchedule().add(homeGame);
 
                     // Away Team
                     Game awayGame = new Game();
 
+                    awayGame.setId(eid+"-away");
+                    awayGame.setTeam(awayTeam);
                     awayGame.setTime(gameDate);
-                    awayGame.setHomeTeam(false);
-                    awayGame.setOpponentTeamId(homeTeamId);
+                    awayGame.setHomeFlag(false);
+                    awayGame.setOpponentTeam(homeTeam);
 
                     awayTeam.getSchedule().add(awayGame);
 
-                    System.out.println(awayGame.getOpponentTeamId() + " vs " + homeGame.getOpponentTeamId());
+                    System.out.println(awayGame.getOpponentTeam().getId() + " vs " + homeGame.getOpponentTeam().getId());
                 }
 
                 // If list size isn't the week size, team has a bye week
@@ -127,6 +142,8 @@ public class NflService extends BaseLeagueService implements LeagueService{
         } catch(Exception e){
             e.printStackTrace();
         }
+
+        saveSchedule(teamMap.values());
 
         return teamMap.values();
     }

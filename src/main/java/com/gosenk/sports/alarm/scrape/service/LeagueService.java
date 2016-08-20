@@ -1,9 +1,8 @@
-package service;
+package com.gosenk.sports.alarm.scrape.service;
 
-import dto.Team;
+import com.gosenk.sports.alarm.scrape.dso.Team;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface LeagueService {
 
